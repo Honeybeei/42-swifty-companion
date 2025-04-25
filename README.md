@@ -48,10 +48,10 @@ The app follows a consistent design system with:
 ## 🚀 Development Roadmap
 
 - [ ] Setup project with Expo and dependencies
-  - [ ] Initialize Expo project
-  - [ ] Install necessary dependencies
-    - [ ] NativeWind and GluestackUI
-    - [ ] Zustand and Axios
+  - [x] Initialize Expo project
+  - [x] Install necessary dependencies
+    - [x] NativeWind and GluestackUI
+    - [x] Zustand and Axios
 - [ ] Create design tokens and theme configuration
 - [ ] Implement authentication flow
 - [ ] Check API endpoints and data structures
