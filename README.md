@@ -4,7 +4,7 @@ Swifty Companion is a simple mobile application project that retrieves and displ
 
 ## 📱 Features
 
-### Core Features
+### 🗽 Core Features
 
 - Search for 42 students by intra ID
 - View detailed student profiles including:
@@ -18,7 +18,7 @@ Swifty Companion is a simple mobile application project that retrieves and displ
 - Error handling (network issues, user not found)
 - Token refresh mechanism
 
-### UI/UX
+### ✨ UI/UX
 
 - Pizza-themed interface with brown and orange color palette
 - Responsive layout for various screen sizes
