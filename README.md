@@ -47,7 +47,7 @@ The app follows a consistent design system with:
 
 ## 🚀 Development Roadmap
 
-- [ ] Setup project with Expo and dependencies
+- [x] Setup project with Expo and dependencies
   - [x] Initialize Expo project
   - [x] Install necessary dependencies
     - [x] NativeWind and GluestackUI
