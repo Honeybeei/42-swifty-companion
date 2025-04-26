@@ -8,7 +8,7 @@ export default function RootLayout() {
   const { theme } = useThemeStore();
   return (
     <GluestackUIProvider mode={theme}>
-      <Stack />
+      <Stack screenOptions={{ headerShown: false }} />
     </GluestackUIProvider>
   );
 }

@@ -39,7 +39,7 @@ Swifty Companion is a simple mobile application project that retrieves and displ
 
 The app follows a consistent design system with:
 
-- **Colors**: Pizza-inspired brown and orange palette
+- **Colors**: Pizza-inspired brown and orange palette `#f3983e`
 - **Typography**: Clean, readable fonts with consistent hierarchies
 - **Components**: Standardized UI elements from GluestackUI
 - **Spacing**: Consistent padding and margins
@@ -57,3 +57,5 @@ The app follows a consistent design system with:
 - [ ] Check API endpoints and data structures
 - [ ] Build student profile screen
 - [ ] Implement search functionality
+
+## 
