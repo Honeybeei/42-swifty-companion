@@ -28,12 +28,13 @@ Swifty Companion is a simple mobile application project that retrieves and displ
 
 ## 🛠️ Tech Stack
 
-- **Framework**: React Native with Expo
-- **Routing**: Expo Router
-- **State Management**: Zustand
-- **Styling**: NativeWind (Tailwind CSS for React Native)
-- **UI Components**: GluestackUI
-- **API Handling**: Axios
+- **Tauri**: Cross-platform desktop / mobile application framework
+- **Frontend**
+  - **React**
+  - **Tailwind CSS**
+  - **Shadcn-UI**
+- **Backend**
+  - **Rust**: Tauri is built with Rust, leveraging its performance and safety features.
 
 ## 🎨 Design System
 
@@ -47,15 +48,13 @@ The app follows a consistent design system with:
 
 ## 🚀 Development Roadmap
 
-- [x] Setup project with Expo and dependencies
-  - [x] Initialize Expo project
-  - [x] Install necessary dependencies
-    - [x] NativeWind and GluestackUI
-    - [x] Zustand and Axios
+- [x] Setup project Tauri and dependencies
+  - [x] Initialize Tauri project
+  - [x] Configure Tauri for mobile development
+  - [x] Install necessary dependencies for frontend (React, Tailwind CSS, Shadcn-UI)
+- [ ] Implement app state management.
 - [ ] Create design tokens and theme configuration
 - [ ] Implement authentication flow
 - [ ] Check API endpoints and data structures
 - [ ] Build student profile screen
 - [ ] Implement search functionality
-
-## 
