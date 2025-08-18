@@ -1,5 +1,3 @@
-import { Button } from "./shadcn/components/ui/button";
-import { ThemeToggle } from "./features/theme/ThemeToggle";
 import { useFrontendStore } from "./stores/frontendStore";
 import HomeScreen from "./features/home/HomeScreen";
 import SearchScreen from "./features/search/SearchScreen";
@@ -10,7 +8,14 @@ function App() {
   const { currentScreen } = useFrontendStore();
 
   return (
-    <div className="flex flex-col items-center justify-center p-2 h-screen">
+    <div
+      className="flex flex-col h-screen"
+      style={{
+        paddingTop: `max(env(safe-area-inset-top))`,
+        paddingLeft: `max(env(safe-area-inset-left))`,
+        paddingRight: `max(env(safe-area-inset-right))`,
+      }}
+    >
       <div className="flex-grow">
         {currentScreen === "home" && <HomeScreen />}
         {currentScreen === "search" && <SearchScreen />}
