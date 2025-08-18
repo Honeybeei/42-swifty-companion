@@ -1,30 +1,22 @@
-import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { Button } from "./shadcn/components/ui/button";
-import { Input } from "./shadcn/components/ui/input";
-import { Card } from "./shadcn/components/ui/card";
 import { ThemeToggle } from "./features/theme/ThemeToggle";
+import { useFrontendStore } from "./stores/frontendStore";
+import HomeScreen from "./features/home/HomeScreen";
+import SearchScreen from "./features/search/SearchScreen";
+import SettingsScreen from "./features/settings/SettingsScreen";
+import Footer from "./features/layouts/Footer";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
-
-  async function greet() {
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  const { currentScreen } = useFrontendStore();
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center p-2">
-      <Card className="w-full max-w-md p-6">
-        <Input
-          value={name}
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <Button onClick={greet}>Click me</Button>
-        <p className="mt-4 text-center text-card-foreground">{greetMsg}</p>
-      </Card>
-      <ThemeToggle />
+    <div className="flex flex-col items-center justify-center p-2 h-screen">
+      <div className="flex-grow">
+        {currentScreen === "home" && <HomeScreen />}
+        {currentScreen === "search" && <SearchScreen />}
+        {currentScreen === "settings" && <SettingsScreen />}
+      </div>
+      <Footer />
     </div>
   );
 }
