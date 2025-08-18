@@ -11,9 +11,15 @@
     "dev:desktop": "tauri dev",
     "dev:ios": "tauri ios dev",
     "dev:android": "tauri android dev",
+    "build:desktop": "tauri build",
     "init:mobile:ios": "tauri ios init",
     "init:mobile:android": "tauri android init",
-    "init:mobile": "npm run init:mobile:ios && npm run init:mobile:android"
+    "init:mobile": "npm run init:mobile:ios && npm run init:mobile:android",
+    "clean:node": "rm -rf node_modules",
+    "clean:build:frontend": "rm -rf dist",
+    "clean:build:backend": "rm -rf src-tauri/target",
+    "clean:build:all": "npm run clean:build:frontend && npm run clean:build:backend",
+    "clean:all": "npm run clean:node && npm run clean:build:all"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

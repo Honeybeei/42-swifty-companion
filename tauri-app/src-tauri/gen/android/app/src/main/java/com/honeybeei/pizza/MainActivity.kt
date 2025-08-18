@@ -1,4 +1,4 @@
-package com.honeybeei.tauri_app
+package com.honeybeei.pizza
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
