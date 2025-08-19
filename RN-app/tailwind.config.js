@@ -14,6 +14,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        highlight: {
+          0: "(var(--color-highlight-0))",
+          50: "(var(--color-highlight-50))",
+          100: "(var(--color-highlight-100))",
+          200: "(var(--color-highlight-200))",
+          300: "(var(--color-highlight-300))",
+          400: "(var(--color-highlight-400))",
+          500: "(var(--color-highlight-500))",
+          600: "(var(--color-highlight-600))",
+          700: "(var(--color-highlight-700))",
+          800: "(var(--color-highlight-800))",
+          900: "(var(--color-highlight-900))",
+          950: "(var(--color-highlight-950))",
+        },
         primary: {
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
           50: 'rgb(var(--color-primary-50)/<alpha-value>)',
