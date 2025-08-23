@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.honeybeei.RNapp'
+    namespace 'com.honeybeei.pizza'
     defaultConfig {
-        applicationId 'com.honeybeei.RNapp'
+        applicationId 'com.honeybeei.pizza'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

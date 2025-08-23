@@ -1,6 +1,6 @@
 # 🍕 Swifty Companion
 
-Swifty Companion is a simple mobile application project that retrieves and displays information about 42 School students using the 42 API. 
+Swifty Companion is a simple mobile application project that retrieves and displays information about 42 School students using the 42 API.
 
 ## 📱 Features
 
@@ -28,13 +28,18 @@ Swifty Companion is a simple mobile application project that retrieves and displ
 
 ## 🛠️ Tech Stack
 
-- **Tauri**: Cross-platform desktop / mobile application framework
-- **Frontend**
-  - **React**
-  - **Tailwind CSS**
-  - **Shadcn-UI**
+- **Mobile App**
+  - **React Native & Expo**: Cross-platform mobile development
+  - **TypeScript**: Type safety and modern JavaScript features
+  - **GluestackUI**: UI component library for consistent design
+  - **NativeWind**: Tailwind CSS for React Native
+  - **Zustand**: State management
+
 - **Backend**
-  - **Rust**: Tauri is built with Rust, leveraging its performance and safety features.
+  - **Go**: Backend API for exchanging authorization code for access token
+
+- **API**
+  - **42 API & OAuth2**: Data source and authentication
 
 ## 🎨 Design System
 
@@ -47,14 +52,3 @@ The app follows a consistent design system with:
 - **Animations**: Subtle, purposeful transitions
 
 ## 🚀 Development Roadmap
-
-- [x] Setup project Tauri and dependencies
-  - [x] Initialize Tauri project
-  - [x] Configure Tauri for mobile development
-  - [x] Install necessary dependencies for frontend (React, Tailwind CSS, Shadcn-UI)
-- [ ] Implement app state management.
-- [ ] Create design tokens and theme configuration
-- [ ] Implement authentication flow
-- [ ] Check API endpoints and data structures
-- [ ] Build student profile screen
-- [ ] Implement search functionality

@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "RN-app",
-    "slug": "RN-app",
+    "name": "pizza",
+    "slug": "pizza",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "rnapp",
+    "scheme": "com.honeybeei.pizza",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.honeybeei.RNapp"
+      "bundleIdentifier": "com.honeybeei.pizza"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.honeybeei.RNapp"
+      "package": "com.honeybeei.pizza"
     },
     "web": {
       "bundler": "metro",
@@ -35,7 +35,9 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
