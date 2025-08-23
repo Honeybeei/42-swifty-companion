@@ -1,4 +1,5 @@
 import { Button, ButtonText } from "@/components/shared/gluestack-ui/button";
+import { Spinner } from "@/components/shared/gluestack-ui/spinner";
 import Screen from "@/components/shared/layouts/Screen";
 import { useAuthStore } from "@/store/authStore";
 import * as Linking from "expo-linking";
@@ -8,57 +9,48 @@ import { Text } from "react-native";
 
 // This screen will be rendered when the app is opened via a deep link(com.honeybeei.RNapp://auth-redirect).
 export default function AuthRedirect() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Error for displaying authentication errors
-  const { authError, signInWith42 } = useAuthStore();
+  const [error, setError] = useState<string | null>(null); // Error for displaying
+  const { signInWith42, loadUserProfile } = useAuthStore();
   const router = useRouter();
 
   // Get the URL that opened the app
   const url = Linking.useLinkingURL();
 
   useEffect(() => {
-    console.log("AuthRedirect opened with URL:", url);
-    try {
+    const handleAuthentication = async () => {
+      setError(null);
+
       if (!url) {
-        throw new Error("No URL provided for authentication redirect");
+        setError("No URL provided for authentication redirect");
+        return;
       }
 
-      setTimeout(() => {
-        signInWith42(url).then(() => {
-          console.log("User signed in successfully");
-          console.log("Closing WebBrowser");
-          // WebBrowser.dismissBrowser(); // Close the WebBrowser if it's still open
-          router.replace("/(tabs)"); // Navigate to home or main screen after successful auth
-        });
-      }, 3000);
-    } catch (error) {
-      console.error("Error in AuthRedirect useEffect:", error);
-      setError("Failed to process authentication. Please try again.");
-    } finally {
-      setIsLoading(false); // Set loading to false after processing the URL
-    }
-  }, [url]);
+      console.log("AuthRedirect opened with URL:", url);
 
-  useEffect(() => {
-    if (authError) {
-      setError(authError);
-      console.error("Authentication error:", authError);
-    }
-  }, [authError]);
+      try {
+        await signInWith42(url);
+        console.log("User signed in successfully");
+        await loadUserProfile();
+        router.replace("/(tabs)");
+      } catch (error) {
+        console.error("Error in signInWith42:", error);
+        setError(error instanceof Error ? error.message : String(error));
+      }
+    };
 
-  if (isLoading) {
-    return (
-      <Screen>
-        <Text className="text-xl font-bold text-primary-500">Loading...</Text>
-      </Screen>
-    );
-  }
+    handleAuthentication();
+  }, [url, router, signInWith42, loadUserProfile]);
+
+  const handleGoToAuth = () => {
+    router.dismissAll();
+    router.push("/auth");
+  };
 
   if (error) {
     return (
       <Screen>
         <Text className="text-xl font-bold text-red-500">{error}</Text>
-        <Button onPress={() => router.replace("/auth")}>
+        <Button onPress={handleGoToAuth}>
           <ButtonText>Go to auth screen</ButtonText>
         </Button>
       </Screen>
@@ -67,7 +59,7 @@ export default function AuthRedirect() {
 
   return (
     <Screen>
-      <Text className="text-xl font-bold text-primary-500">Auth Redirect</Text>
+      <Spinner size="large" />
     </Screen>
   );
 }
