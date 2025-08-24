@@ -1,18 +1,22 @@
-import type { UserProfile } from "@/store/authStore";
+import { UserProfile } from "@/types";
 
-export async function fetchUserProfile(accessToken: string): Promise<UserProfile> {
+export async function fetchUserProfile(
+  accessToken: string
+): Promise<UserProfile> {
   try {
     const response = await fetch("https://api.intra.42.fr/v2/me", {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Failed to fetch user profile: ${response.status} ${errorText}`);
+      throw new Error(
+        `Failed to fetch user profile: ${response.status} ${errorText}`
+      );
     }
 
     const profile: UserProfile = await response.json();

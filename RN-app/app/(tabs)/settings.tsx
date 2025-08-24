@@ -1,4 +1,4 @@
-import FakeAuthButton from "@/components/shared/dummy/FakeAuthButton";
+import ThemeSwitchButton from "@/components/settings/ThemeSelectButton";
 import Screen from "@/components/shared/layouts/Screen";
 import { Text } from "react-native";
 
@@ -8,7 +8,7 @@ export default function SettingsScreen() {
       <Text className="text-xl font-bold text-primary-500">
         Settings Screen
       </Text>
-      <FakeAuthButton />
+      <ThemeSwitchButton />
     </Screen>
   );
 }

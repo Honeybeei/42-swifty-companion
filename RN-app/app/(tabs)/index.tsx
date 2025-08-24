@@ -1,19 +1,37 @@
 import { Button, ButtonText } from "@/components/shared/gluestack-ui/button";
 import Screen from "@/components/shared/layouts/Screen";
-import { useAuthStore } from "@/store/authStore";
-import { ScrollView, Text, View, Image } from "react-native";
+import { useUserStore } from "@/store/userStore";
+import { useEffect, useState } from "react";
+import { Image, ScrollView, Text, View } from "react-native";
 
 export default function HomeScreen() {
-  const { signOut, userProfile } = useAuthStore();
-  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { signOut, loadUserProfile, userProfile } = useUserStore();
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      setLoading(true);
+      setError(null);
+      const success = await loadUserProfile();
+      if (!success) {
+        setError("Failed to load user profile.");
+      }
+      setLoading(false);
+    };
+    loadProfile();
+  }, [loadUserProfile]);
+
   async function handleSignOut() {
     await signOut();
   }
 
-  if (!userProfile) {
+  if (loading) {
     return (
       <Screen>
-        <Text className="text-xl font-bold text-primary-500">Loading user data...</Text>
+        <Text className="text-xl font-bold text-primary-500">
+          Loading user data...
+        </Text>
         <Button onPress={handleSignOut}>
           <ButtonText>Sign Out</ButtonText>
         </Button>
@@ -21,17 +39,33 @@ export default function HomeScreen() {
     );
   }
 
+  if (error || !userProfile) {
+    return (
+      <Screen>
+        <Text className="text-xl font-bold text-red-500 mb-4">
+          {error || "No user profile available."}
+        </Text>
+        <Button onPress={handleSignOut}>
+          <ButtonText>Sign Out</ButtonText>
+        </Button>
+      </Screen>
+    );
+  }
   return (
     <Screen>
       <ScrollView className="flex-1 w-full p-4">
-        <Text className="text-2xl font-bold text-primary-500 mb-4">42 Profile</Text>
-        
+        <Text className="text-2xl font-bold text-primary-500 mb-4">
+          42 Profile
+        </Text>
+
         <View className="mb-4 items-center">
-          <Image 
+          <Image
             source={{ uri: userProfile.image.versions.medium }}
             className="w-24 h-24 rounded-full mb-2"
           />
-          <Text className="text-xl font-semibold">{userProfile.displayname}</Text>
+          <Text className="text-xl font-semibold">
+            {userProfile.displayname}
+          </Text>
           <Text className="text-lg text-gray-600">@{userProfile.login}</Text>
         </View>
 
@@ -41,7 +75,9 @@ export default function HomeScreen() {
           <Text>Kind: {userProfile.kind}</Text>
           <Text>Correction Points: {userProfile.correction_point}</Text>
           <Text>Wallet: {userProfile.wallet}</Text>
-          <Text>Pool: {userProfile.pool_month} {userProfile.pool_year}</Text>
+          <Text>
+            Pool: {userProfile.pool_month} {userProfile.pool_year}
+          </Text>
           <Text>Location: {userProfile.location || "Not available"}</Text>
         </View>
 
@@ -49,7 +85,9 @@ export default function HomeScreen() {
           <View className="space-y-2 mb-4">
             <Text className="text-lg font-semibold">Campus</Text>
             {userProfile.campus.map((campus) => (
-              <Text key={campus.id}>{campus.name} ({campus.time_zone})</Text>
+              <Text key={campus.id}>
+                {campus.name} ({campus.time_zone})
+              </Text>
             ))}
           </View>
         )}
@@ -61,7 +99,9 @@ export default function HomeScreen() {
               <View key={cursus.id} className="mb-2">
                 <Text>Course: {cursus.cursus.name}</Text>
                 <Text>Level: {cursus.level.toFixed(2)}</Text>
-                <Text>Started: {new Date(cursus.begin_at).toLocaleDateString()}</Text>
+                <Text>
+                  Started: {new Date(cursus.begin_at).toLocaleDateString()}
+                </Text>
               </View>
             ))}
           </View>

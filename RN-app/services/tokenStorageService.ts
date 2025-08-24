@@ -1,17 +1,13 @@
+import { AuthToken } from "@/types";
 import * as SecureStore from "expo-secure-store";
 
-interface TokenData {
-  accessToken: string;
-  refreshToken?: string;
-  expiresIn: number;
-  tokenType: string;
-}
+// This service only handles saving and retrieving tokens from secure storage.
 
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
-const TOKEN_EXPIRES_AT_KEY = "token_expires_at";
+const CREATED_AT_KEY = "created_at";
 
-async function saveTokens(tokenData: TokenData): Promise<void> {
+async function saveTokens(tokenData: AuthToken): Promise<void> {
   try {
     await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, tokenData.accessToken);
 
@@ -19,8 +15,10 @@ async function saveTokens(tokenData: TokenData): Promise<void> {
       await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, tokenData.refreshToken);
     }
 
-    const expiresAt = Date.now() + tokenData.expiresIn * 1000;
-    await SecureStore.setItemAsync(TOKEN_EXPIRES_AT_KEY, expiresAt.toString());
+    await SecureStore.setItemAsync(
+      CREATED_AT_KEY,
+      tokenData.createdAt.toString()
+    );
   } catch (error) {
     console.error("Error saving tokens:", error);
     throw new Error("Failed to save tokens");
@@ -45,24 +43,21 @@ export async function getRefreshToken(): Promise<string | null> {
   }
 }
 
-export async function isTokenExpired(): Promise<boolean> {
+export async function getTokenCreationTime(): Promise<number | null> {
   try {
-    const expiresAt = await SecureStore.getItemAsync(TOKEN_EXPIRES_AT_KEY);
-    if (expiresAt) {
-      return Date.now() > parseInt(expiresAt, 10);
-    }
-    return true;
+    const createdAtStr = await SecureStore.getItemAsync(CREATED_AT_KEY);
+    return createdAtStr ? parseInt(createdAtStr, 10) : null;
   } catch (error) {
-    console.error("Error checking token expiration:", error);
-    return true;
+    console.error("Error retrieving token creation time:", error);
+    return null;
   }
 }
 
-export async function clearTokens(): Promise<void> {
+export async function clear(): Promise<void> {
   try {
     await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
     await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
-    await SecureStore.deleteItemAsync(TOKEN_EXPIRES_AT_KEY);
+    await SecureStore.deleteItemAsync(CREATED_AT_KEY);
   } catch (error) {
     console.error("Error clearing tokens:", error);
   }
@@ -72,6 +67,6 @@ export const tokenStorage = {
   saveTokens,
   getAccessToken,
   getRefreshToken,
-  isTokenExpired,
-  clearTokens,
+  getTokenCreationTime,
+  clear,
 };

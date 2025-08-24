@@ -2,8 +2,7 @@ import { Button, ButtonText } from "@/components/shared/gluestack-ui/button";
 import Screen from "@/components/shared/layouts/Screen";
 import Env from "@/utils/env";
 import { useRouter } from "expo-router";
-
-import { Text } from "react-native";
+import { Image, View } from "react-native";
 
 export default function AuthScreen() {
   const CLIENT_ID = Env.clientId;
@@ -22,10 +21,20 @@ export default function AuthScreen() {
   }
 
   return (
-    <Screen>
-      <Text className="text-xl font-bold text-primary-500">Auth Screen</Text>
-      <Button onPress={handleOpenURL}>
-        <ButtonText>Sign-in with 42</ButtonText>
+    <Screen className="px-4 py-2">
+      <View className="flex flex-1 items-center justify-center">
+        <Image
+          source={require("@/assets/images/app-icon-maskable.png")}
+          resizeMode="contain"
+          className="w-2/3"
+        />
+      </View>
+      <Button
+        className="bg-highlight-500 data-[active=true]:bg-highlight-600 w-full rounded-2xl "
+        size="xl"
+        onPress={handleOpenURL}
+      >
+        <ButtonText>Sign in with 42</ButtonText>
       </Button>
     </Screen>
   );

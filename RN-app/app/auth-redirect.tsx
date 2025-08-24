@@ -1,64 +1,77 @@
 import { Button, ButtonText } from "@/components/shared/gluestack-ui/button";
 import { Spinner } from "@/components/shared/gluestack-ui/spinner";
+import { Text } from "@/components/shared/gluestack-ui/text";
 import Screen from "@/components/shared/layouts/Screen";
-import { useAuthStore } from "@/store/authStore";
+import { useUserStore } from "@/store/userStore";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { Image, View } from "react-native";
 
-// This screen will be rendered when the app is opened via a deep link(com.honeybeei.RNapp://auth-redirect).
+type AuthState = "loading" | "authenticated" | "error";
+
 export default function AuthRedirect() {
-  const [error, setError] = useState<string | null>(null); // Error for displaying
-  const { signInWith42, loadUserProfile } = useAuthStore();
+  const [state, setState] = useState<AuthState>("loading");
+  const { signInWith42, authError } = useUserStore();
   const router = useRouter();
 
-  // Get the URL that opened the app
+  // Get the URL from deep linking
   const url = Linking.useLinkingURL();
 
   useEffect(() => {
-    const handleAuthentication = async () => {
-      setError(null);
+    console.log("Deep link URL:", url);
 
-      if (!url) {
-        setError("No URL provided for authentication redirect");
-        return;
-      }
-
-      console.log("AuthRedirect opened with URL:", url);
-
-      try {
-        await signInWith42(url);
-        console.log("User signed in successfully");
-        await loadUserProfile();
+    // Async function to handle sign-in
+    const handleSignIn = async () => {
+      const result = await signInWith42(url);
+      if (result) {
+        setState("authenticated");
         router.replace("/(tabs)");
-      } catch (error) {
-        console.error("Error in signInWith42:", error);
-        setError(error instanceof Error ? error.message : String(error));
+      } else {
+        setState("error");
       }
     };
+    handleSignIn();
+  }, [url, signInWith42, router]);
 
-    handleAuthentication();
-  }, [url, router, signInWith42, loadUserProfile]);
+  // use effect to monitor auth state and navigate accordingly
 
   const handleGoToAuth = () => {
-    router.dismissAll();
-    router.push("/auth");
+    router.dismissTo("/auth");
   };
 
-  if (error) {
+  if (state === "error") {
     return (
-      <Screen>
-        <Text className="text-xl font-bold text-red-500">{error}</Text>
-        <Button onPress={handleGoToAuth}>
-          <ButtonText>Go to auth screen</ButtonText>
+      <Screen className="space-y-4 px-4">
+        <View className="flex flex-1 items-center justify-center">
+          <Image
+            source={require("@/assets/images/sad-pizza-maskable.png")}
+            resizeMode="contain"
+            className="w-2/3"
+          />
+        </View>
+        <View className="mt-8 items-center">
+          <Text className="text-center mb-2">
+            Oops! Something went wrong during authentication.
+          </Text>
+          <Text className="text-center text-sm opacity-70">
+            {authError?.message}
+          </Text>
+        </View>
+        <Button
+          action="primary"
+          onPress={handleGoToAuth}
+          className="w-full rounded-2xl"
+          size="xl"
+        >
+          <ButtonText>Go back to auth screen</ButtonText>
         </Button>
       </Screen>
     );
   }
 
   return (
-    <Screen>
+    <Screen className="flex items-center justify-center">
       <Spinner size="large" />
     </Screen>
   );
