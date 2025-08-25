@@ -1,7 +1,7 @@
 import { AuthToken } from "@/types";
 import Env from "@/utils/env";
 import * as Linking from "expo-linking";
-import { authApiClient } from "./apiClient";
+import { authApiClient } from "./authApiClient";
 
 export function extractAuthCodeFromUrl(url: string): string | null {
   try {
