@@ -1,6 +1,5 @@
 import ErrorScreen from "@/components/shared/ErrorScreen";
-import { Spinner } from "@/components/shared/gluestack-ui/spinner";
-import Screen from "@/components/shared/layouts/Screen";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 import { useUserStore } from "@/store/userStore";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
@@ -52,9 +51,5 @@ export default function AuthRedirect() {
     );
   }
 
-  return (
-    <Screen className="flex items-center justify-center">
-      <Spinner size="large" />
-    </Screen>
-  );
+  return <LoadingScreen message="Signing you in..." />;
 }

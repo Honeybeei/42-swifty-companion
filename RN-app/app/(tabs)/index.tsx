@@ -1,6 +1,6 @@
 import { Button, ButtonText } from "@/components/shared/gluestack-ui/button";
-import { Spinner } from "@/components/shared/gluestack-ui/spinner";
 import Screen from "@/components/shared/layouts/Screen";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 import { useUserStore } from "@/store/userStore";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
@@ -33,11 +33,7 @@ export default function HomeScreen() {
   }
 
   if (loading) {
-    return (
-      <Screen>
-        <Spinner size="large" />
-      </Screen>
-    );
+    return <LoadingScreen message="Loading profile..." />;
   }
 
   if (error || !userProfile) {

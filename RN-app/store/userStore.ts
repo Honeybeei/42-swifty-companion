@@ -54,11 +54,12 @@ interface UserStore extends UserState {
 
   // Computed getters
   isTokenExpired: () => boolean;
-  isAuthenticated: () => boolean;
+  checkAuthentication: () => Promise<boolean>;
   getAccessToken: () => string | null;
   getRefreshToken: () => string | null;
 
   // Actions
+  restoreTokensFromStorage: () => Promise<boolean>;
   signInWith42: (url: string | null) => Promise<boolean>;
   signOut: () => Promise<void>;
   refreshAccessToken: () => Promise<void>;
@@ -93,12 +94,22 @@ export const useUserStore = create<UserStore>((set, get) => ({
     const expiresAt = authToken.createdAt + authToken.expiresIn * 1000;
     return Date.now() > expiresAt;
   },
-  isAuthenticated: () => {
+  checkAuthentication: async () => {
     const authToken = get().authToken;
     if (!authToken) {
       return false;
     }
-    return true;
+
+    // If token is not expired, user is authenticated
+    if (!get().isTokenExpired()) {
+      return true;
+    }
+
+    // Token is expired, try to refresh it
+    await get().refreshAccessToken();
+
+    // Return true if refresh was successful (no auth error)
+    return !get().authError;
   },
   getAccessToken: () => {
     return get().authToken?.accessToken || null;
@@ -108,6 +119,53 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
 
   // Actions -------------------------------------------------------------------
+
+  // Restore tokens from storage
+  //
+  // 1. Get tokens from secure storage
+  // 2. If tokens exist, check if they're valid
+  // 3. If expired, try to refresh
+  // 4. If refresh fails or no tokens, return false
+  restoreTokensFromStorage: async () => {
+    try {
+      // Get tokens from secure storage
+      const tokenData = await tokenStorage.getTokenData();
+      if (!tokenData) {
+        console.log("No tokens found in storage");
+        return false;
+      }
+
+      // Set the tokens in store
+      get().setAuthToken(tokenData);
+
+      // Check if token is expired
+      if (get().isTokenExpired()) {
+        console.log("Stored token is expired, attempting to refresh");
+
+        // Try to refresh the token
+        await get().refreshAccessToken();
+
+        // Check if refresh was successful
+        if (get().authError) {
+          console.log("Token refresh failed:", get().authError?.message);
+          get().resetStore();
+          await tokenStorage.clear();
+          return false;
+        }
+
+        console.log("Token refreshed successfully");
+        return true;
+      }
+
+      console.log("Valid token restored from storage");
+      return true;
+    } catch (error) {
+      console.error("Failed to restore tokens from storage:", error);
+      get().resetStore();
+      await tokenStorage.clear();
+      return false;
+    }
+  },
 
   // Sign in with 42
   //
@@ -169,9 +227,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
   // Refresh access token
   //
   // 1. Check for existing refresh token
-  // 2. Check if refresh token is expired
-  // 3. Get new access token using refresh token
-  // 4. Save new access token to store and secure storage
+  // 2. Get new access token using refresh token
+  // 3. Save new access token to store and secure storage
   refreshAccessToken: async () => {
     // Check for existing refresh token
     const refreshToken = get().getRefreshToken();
@@ -179,15 +236,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
       get().setAuthError({
         type: AuthErrorType.REFRESH_TOKEN_FAILED,
         message: "No refresh token available.",
-      });
-      return;
-    }
-
-    // Check if refresh token is expired
-    if (get().isTokenExpired()) {
-      get().setAuthError({
-        type: AuthErrorType.REFRESH_TOKEN_FAILED,
-        message: "Refresh token is expired.",
       });
       return;
     }
@@ -212,25 +260,20 @@ export const useUserStore = create<UserStore>((set, get) => ({
     console.log("Access token refreshed successfully");
   },
 
-  // TODO
   // Load user profile
   //
   // 1. check if access token is valid
   // 2. If valid, fetch user profile
   // 3. If not valid, refresh access token
   loadUserProfile: async () => {
-    // check if user is authenticated
-    if (!get().isAuthenticated()) {
+    // check if user is authenticated (this will refresh token if needed)
+    const isAuthenticated = await get().checkAuthentication();
+    if (!isAuthenticated) {
       get().setUserProfileError({
         type: UserProfileErrorType.NOT_AUTHENTICATED,
         message: "User is not authenticated.",
       });
       return false;
-    }
-
-    // refresh access token if expired
-    if (get().isTokenExpired()) {
-      await get().refreshAccessToken();
     }
 
     // Fetch user profile
