@@ -1,12 +1,10 @@
-import { Button, ButtonText } from "@/components/shared/gluestack-ui/button";
+import ErrorScreen from "@/components/shared/ErrorScreen";
 import { Spinner } from "@/components/shared/gluestack-ui/spinner";
-import { Text } from "@/components/shared/gluestack-ui/text";
 import Screen from "@/components/shared/layouts/Screen";
 import { useUserStore } from "@/store/userStore";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, View } from "react-native";
 
 type AuthState = "loading" | "authenticated" | "error";
 
@@ -42,31 +40,15 @@ export default function AuthRedirect() {
 
   if (state === "error") {
     return (
-      <Screen className="space-y-4 px-4">
-        <View className="flex flex-1 items-center justify-center">
-          <Image
-            source={require("@/assets/images/sad-pizza-maskable.png")}
-            resizeMode="contain"
-            className="w-2/3"
-          />
-        </View>
-        <View className="mt-8 items-center">
-          <Text className="text-center mb-2">
-            Oops! Something went wrong during authentication.
-          </Text>
-          <Text className="text-center text-sm opacity-70">
-            {authError?.message}
-          </Text>
-        </View>
-        <Button
-          action="primary"
-          onPress={handleGoToAuth}
-          className="w-full rounded-2xl"
-          size="xl"
-        >
-          <ButtonText>Go back to auth screen</ButtonText>
-        </Button>
-      </Screen>
+      <ErrorScreen
+        message="Authentication failed"
+        errorDetails={authError?.message}
+        showNextActionButton
+        nextActionButtonProps={{
+          buttonText: "Go back to auth screen",
+          handleRedirect: handleGoToAuth,
+        }}
+      />
     );
   }
 

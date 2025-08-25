@@ -1,4 +1,5 @@
 import { Button, ButtonText } from "@/components/shared/gluestack-ui/button";
+import { Spinner } from "@/components/shared/gluestack-ui/spinner";
 import Screen from "@/components/shared/layouts/Screen";
 import { useUserStore } from "@/store/userStore";
 import { useEffect, useState } from "react";
@@ -13,6 +14,11 @@ export default function HomeScreen() {
     const loadProfile = async () => {
       setLoading(true);
       setError(null);
+      // Check if user profile is already loaded
+      if (userProfile) {
+        setLoading(false);
+        return;
+      }
       const success = await loadUserProfile();
       if (!success) {
         setError("Failed to load user profile.");
@@ -20,7 +26,7 @@ export default function HomeScreen() {
       setLoading(false);
     };
     loadProfile();
-  }, [loadUserProfile]);
+  }, [loadUserProfile, userProfile]);
 
   async function handleSignOut() {
     await signOut();
@@ -29,12 +35,7 @@ export default function HomeScreen() {
   if (loading) {
     return (
       <Screen>
-        <Text className="text-xl font-bold text-primary-500">
-          Loading user data...
-        </Text>
-        <Button onPress={handleSignOut}>
-          <ButtonText>Sign Out</ButtonText>
-        </Button>
+        <Spinner size="large" />
       </Screen>
     );
   }
