@@ -33,7 +33,28 @@ async function post<T>(endpoint: string, data: any): Promise<T> {
     console.log("Response status:", response.status);
 
     if (!response.ok) {
-      const errorData = await response.json();
+      let errorData: any = {};
+      try {
+        const responseText = await response.text();
+        if (
+          responseText.trim().startsWith("{") ||
+          responseText.trim().startsWith("[")
+        ) {
+          errorData = JSON.parse(responseText);
+        } else {
+          errorData = {
+            message: `Server returned HTML/text response: ${responseText.substring(
+              0,
+              100
+            )}...`,
+          };
+        }
+      } catch (parseError) {
+        errorData = {
+          message: `Failed to parse server response: ${parseError}`,
+        };
+      }
+
       const error = new Error(
         getErrorMessage(response.status, errorData)
       ) as ApiError;
@@ -42,7 +63,24 @@ async function post<T>(endpoint: string, data: any): Promise<T> {
       throw error;
     }
 
-    return await response.json();
+    try {
+      const responseText = await response.text();
+      if (
+        responseText.trim().startsWith("{") ||
+        responseText.trim().startsWith("[")
+      ) {
+        return JSON.parse(responseText);
+      } else {
+        throw new Error(
+          `Server returned non-JSON response: ${responseText.substring(
+            0,
+            100
+          )}...`
+        );
+      }
+    } catch (parseError) {
+      throw new Error(`Failed to parse JSON response: ${parseError}`);
+    }
   } catch (error) {
     console.error("Error in API request:", error);
     if (
@@ -71,7 +109,28 @@ export async function get<T>(
     console.log("Response status:", response.status);
 
     if (!response.ok) {
-      const errorData = await response.json();
+      let errorData: any = {};
+      try {
+        const responseText = await response.text();
+        if (
+          responseText.trim().startsWith("{") ||
+          responseText.trim().startsWith("[")
+        ) {
+          errorData = JSON.parse(responseText);
+        } else {
+          errorData = {
+            message: `Server returned HTML/text response: ${responseText.substring(
+              0,
+              100
+            )}...`,
+          };
+        }
+      } catch (parseError) {
+        errorData = {
+          message: `Failed to parse server response: ${parseError}`,
+        };
+      }
+
       const error = new Error(
         getErrorMessage(response.status, errorData)
       ) as ApiError;
@@ -80,7 +139,24 @@ export async function get<T>(
       throw error;
     }
 
-    return await response.json();
+    try {
+      const responseText = await response.text();
+      if (
+        responseText.trim().startsWith("{") ||
+        responseText.trim().startsWith("[")
+      ) {
+        return JSON.parse(responseText);
+      } else {
+        throw new Error(
+          `Server returned non-JSON response: ${responseText.substring(
+            0,
+            100
+          )}...`
+        );
+      }
+    } catch (parseError) {
+      throw new Error(`Failed to parse JSON response: ${parseError}`);
+    }
   } catch (error) {
     console.error("Error in API request:", error);
     if (
