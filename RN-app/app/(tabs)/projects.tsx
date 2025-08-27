@@ -115,12 +115,12 @@ export default function ProjectsScreen() {
             <Select
               selectedValue={sortOption}
               onValueChange={(value) => setSortOption(value)}
-              className="w-1/3"
+              className="min-w-1/3 max-w-1/2"
             >
               <SelectTrigger
                 variant="rounded"
                 size="sm"
-                className="w-full border-2 border-highlight-400 pr-2"
+                className="border-2 border-highlight-400 h-12 items-center justify-between pr-4"
               >
                 <SelectInput
                   placeholder="Sort by..."
@@ -142,11 +142,11 @@ export default function ProjectsScreen() {
                       : "Newest first"
                   }
                 />
-                <SelectIcon as={ChevronDownIcon} />
+                <SelectIcon as={ChevronDownIcon} className="" />
               </SelectTrigger>
               <SelectPortal>
                 <SelectBackdrop />
-                <SelectContent className="pb-10">
+                <SelectContent>
                   <SelectDragIndicatorWrapper>
                     <SelectDragIndicator />
                   </SelectDragIndicatorWrapper>
