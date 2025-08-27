@@ -16,8 +16,6 @@ export default function AuthRedirect() {
   const url = Linking.useLinkingURL();
 
   useEffect(() => {
-    console.log("Deep link URL:", url);
-
     // Async function to handle sign-in
     const handleSignIn = async () => {
       const result = await signInWith42(url);

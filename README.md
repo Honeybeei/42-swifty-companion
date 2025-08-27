@@ -7,6 +7,30 @@
 
 A modern React Native mobile application that connects with the 42 School API to provide comprehensive student profile information. Built with a pizza-themed UI and secure OAuth2 authentication flow.
 
+- [🍕 Swifty Companion](#-swifty-companion)
+  - [📸 Screenshots](#-screenshots)
+  - [✨ Features](#-features)
+    - [🔐 Authentication \& Security](#-authentication--security)
+    - [👤 Student Profiles](#-student-profiles)
+    - [🎨 User Experience](#-user-experience)
+  - [🏗️ Architecture](#️-architecture)
+    - [📁 Project Structure](#-project-structure)
+    - [🛠️ Tech Stack](#️-tech-stack)
+      - [📱 Frontend](#-frontend)
+      - [🔧 Backend](#-backend)
+      - [🔗 Integration](#-integration)
+  - [🎯 Key Implementation Details](#-key-implementation-details)
+    - [🔐 OAuth2 Flow](#-oauth2-flow)
+    - [📊 State Management](#-state-management)
+    - [🌐 API Integration](#-api-integration)
+  - [🏛️ Clean Architecture Implementation](#️-clean-architecture-implementation)
+    - [🔧 Decoupled Business Logic \& UI](#-decoupled-business-logic--ui)
+      - [📁 Services Layer (Pure Business Logic)](#-services-layer-pure-business-logic)
+      - [🏪 Store Layer (State Management)](#-store-layer-state-management)
+      - [🎨 UI Layer (Pure Presentation)](#-ui-layer-pure-presentation)
+      - [🔄 Benefits of This Architecture](#-benefits-of-this-architecture)
+  - [🙏 Acknowledgments](#-acknowledgments)
+
 ## 📸 Screenshots
 
 <!-- Add your screenshots here -->
@@ -47,7 +71,7 @@ A modern React Native mobile application that connects with the 42 School API to
 
 ## 🏗️ Architecture
 
-### Project Structure
+### 📁 Project Structure
 
 ```plaintext
 42-swifty-companion/
@@ -74,7 +98,7 @@ A modern React Native mobile application that connects with the 42 School API to
     └── types.go               # Go type definitions
 ```
 
-### Tech Stack
+### 🛠️ Tech Stack
 
 #### 📱 Frontend
 
@@ -99,7 +123,7 @@ A modern React Native mobile application that connects with the 42 School API to
 
 ## 🎯 Key Implementation Details
 
-### OAuth2 Flow
+### 🔐 OAuth2 Flow
 
 1. User initiates login through 42 API authorization URL
 2. 42 redirects to custom scheme with authorization code
@@ -107,28 +131,109 @@ A modern React Native mobile application that connects with the 42 School API to
 4. Go server exchanges code for access/refresh tokens with 42 API
 5. Tokens are securely stored and managed in the mobile app
 
-### State Management
+### 📊 State Management
 
 - **User Store**: Manages user profile data and authentication state
 - **Settings Store**: Handles app preferences and theme settings
 - **Zustand**: Provides reactive state updates across components
 
-### API Integration
+### 🌐 API Integration
 
 - **Authenticated Requests**: All 42 API calls include Bearer tokens
 - **Error Handling**: Comprehensive error catching and user-friendly messages
 - **Token Refresh**: Automatic token renewal when expired
 - **Type Safety**: Complete TypeScript interfaces for 42 API responses
 
-## 🧪 Testing
+## 🏛️ Clean Architecture Implementation
 
-```bash
-# Run linting
-cd RN-app && npm run lint
+### 🔧 Decoupled Business Logic & UI
 
-# Test backend
-cd oauth-server && go test ./...
+The React Native app follows a strict **separation of concerns** principle with business logic completely decoupled from UI components:
+
+#### 📁 Services Layer (Pure Business Logic)
+
+All business logic is implemented as **stateless functions** in the `services/` directory:
+
+- **`authService.ts`** - Handles OAuth flow, token exchange, and URL parsing
+- **`profileService.ts`** - Manages 42 API profile fetching operations  
+- **`tokenStorageService.ts`** - Secure token persistence using Expo SecureStore
+- **`authApiClient.ts`** - HTTP client configuration for backend communication
+
+- **Key Benefits:**
+  - ✅ **Testable**: Pure functions with no side effects
+  - ✅ **Reusable**: Business logic can be used across different UI components
+  - ✅ **Maintainable**: Changes to business logic don't affect UI components
+  - ✅ **Type-safe**: Full TypeScript coverage with proper interfaces
+
+#### 🏪 Store Layer (State Management)
+
+Zustand stores act as the **only interface** between UI and business logic:
+
+- **`userStore.ts`** - Orchestrates authentication flow and profile management
+- **`settingsStore.ts`** - Manages app preferences and theme settings
+
+**Architecture Pattern:**
+
+```plaintext
+UI Components → Store Actions → Service Functions → External APIs
+     ↑                                                    ↓
+UI Updates ← Store State ← Service Responses ← API Data
 ```
+
+**Example Flow:**
+
+```typescript
+// 1. UI calls store action
+const signInResult = await userStore.signInWith42(redirectUrl);
+
+// 2. Store action calls service functions
+const authCode = extractAuthCodeFromUrl(url);        // authService.ts
+const tokens = await exchangeToken(authCode);        // authService.ts  
+await tokenStorage.saveTokens(tokens);               // tokenStorageService.ts
+
+// 3. Store updates state, UI reacts automatically
+userStore.setAuthToken(tokens);
+```
+
+#### 🎨 UI Layer (Pure Presentation)
+
+Components focus solely on rendering and user interaction:
+
+- **Stateless**: Components receive data as props from stores
+- **Declarative**: No business logic, only presentation logic
+- **Reactive**: Automatically update when store state changes
+- **Focused**: Each component has a single responsibility
+
+**Example - Clean Component Structure:**
+
+```typescript
+// ✅ Good: Pure presentation component
+export default function BasicProfileCard({ userProfile }: Props) {
+  // Only UI-related logic (formatting, styling)
+  const formatTimeAgo = (dateString: string) => { /* ... */ };
+  
+  return (
+    <DisplayCard>
+      {/* Pure UI rendering */}
+    </DisplayCard>
+  );
+}
+
+// ✅ Good: Store handles all business logic
+const { userProfile, loadUserProfile } = useUserStore();
+```
+
+#### 🔄 Benefits of This Architecture
+
+1. **Separation of Concerns**: Business logic, state management, and UI are completely isolated
+2. **Single Responsibility**: Each layer has one clear purpose
+3. **Dependency Flow**: Clear unidirectional data flow from services → stores → UI
+4. **Error Handling**: Centralized error management in stores with proper error states
+5. **Testing**: Easy to unit test business logic without UI dependencies
+6. **Scalability**: New features can be added without affecting existing code
+7. **Code Reusability**: Services can be reused across different screens/components
+
+This architecture ensures **maintainable**, **testable**, and **scalable** code that follows React Native and modern app development best practices.
 
 ## 🙏 Acknowledgments
 

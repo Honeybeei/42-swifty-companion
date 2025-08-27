@@ -176,6 +176,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
     // Initialize states
     get().resetStore();
 
+    console.log("Processing auth redirect URL:", url);
+
     // Check URL and extract auth code
     if (!url) {
       get().setAuthError({
