@@ -31,8 +31,6 @@ export default function AuthRedirect() {
     handleSignIn();
   }, [url, signInWith42, router]);
 
-  // use effect to monitor auth state and navigate accordingly
-
   const handleGoToAuth = () => {
     router.dismissTo("/auth");
   };

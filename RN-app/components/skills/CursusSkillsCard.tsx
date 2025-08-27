@@ -18,7 +18,11 @@ interface CursusSkillsCardProps {
   cursusUser: CursusUser;
 }
 
-export default function CursusSkillsCard({ cursusUser }: CursusSkillsCardProps) {
+export default function CursusSkillsCard({
+  cursusUser,
+}: CursusSkillsCardProps) {
+  const MAX_SKILL_LEVEL = 15;
+
   const getSkillIcon = (skillName: string) => {
     const name = skillName.toLowerCase();
     if (name.includes("unix")) return "💻";
@@ -26,7 +30,8 @@ export default function CursusSkillsCard({ cursusUser }: CursusSkillsCardProps) 
     if (name.includes("rigor")) return "🎯";
     if (name.includes("web")) return "🌐";
     if (name.includes("network") || name.includes("system")) return "🔧";
-    if (name.includes("programming") || name.includes("imperative")) return "⚡";
+    if (name.includes("programming") || name.includes("imperative"))
+      return "⚡";
     if (name.includes("object")) return "🔗";
     if (name.includes("graphic")) return "🎨";
     if (name.includes("group") || name.includes("interpersonal")) return "👥";
@@ -51,14 +56,6 @@ export default function CursusSkillsCard({ cursusUser }: CursusSkillsCardProps) 
     });
   };
 
-  const averageSkillLevel = cursusUser.skills.length > 0 
-    ? cursusUser.skills.reduce((sum, skill) => sum + skill.level, 0) / cursusUser.skills.length
-    : 0;
-
-  const topSkills = [...cursusUser.skills]
-    .sort((a, b) => b.level - a.level)
-    .slice(0, 3);
-
   return (
     <Accordion variant="unfilled" className="w-full">
       <AccordionItem
@@ -76,40 +73,22 @@ export default function CursusSkillsCard({ cursusUser }: CursusSkillsCardProps) 
                   <BadgeText>Level {cursusUser.level.toFixed(1)}</BadgeText>
                 </Badge>
               </HStack>
-              
+
               {/* Summary Stats */}
               <HStack className="gap-4 w-full flex-wrap">
                 <Text className="text-sm text-typography-600">
                   📊 {cursusUser.skills.length} skills
                 </Text>
                 <Text className="text-sm text-typography-600">
-                  ⭐ Avg {averageSkillLevel.toFixed(1)}
+                  📅 {formatDate(cursusUser.begin_at)} -{" "}
+                  {formatDate(cursusUser.end_at)}
                 </Text>
-                <Text className="text-sm text-typography-600">
-                  📅 {formatDate(cursusUser.begin_at)} - {formatDate(cursusUser.end_at)}
-                </Text>
-              </HStack>
-
-              {/* Top 3 Skills Preview */}
-              <HStack className="gap-2 w-full flex-wrap">
-                {topSkills.map((skill) => (
-                  <Badge
-                    key={skill.id}
-                    action={getSkillColor(skill.level)}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <BadgeText>
-                      {getSkillIcon(skill.name)} {skill.name} {skill.level.toFixed(1)}
-                    </BadgeText>
-                  </Badge>
-                ))}
               </HStack>
             </VStack>
             <AccordionIcon as={ChevronDownIcon} className="ml-2" />
           </AccordionTrigger>
         </AccordionHeader>
-        
+
         <AccordionContent>
           <VStack className="gap-4 px-4 py-2">
             {/* Cursus Info */}
@@ -138,13 +117,6 @@ export default function CursusSkillsCard({ cursusUser }: CursusSkillsCardProps) 
                     {cursusUser.skills.length}
                   </Text>
                   <Text className="text-xs text-typography-500">Skills</Text>
-                </VStack>
-                <VStack className="items-center gap-1 flex-1 min-w-20">
-                  <Text className="text-lg">⭐</Text>
-                  <Text className="text-sm font-bold text-typography-900">
-                    {averageSkillLevel.toFixed(1)}
-                  </Text>
-                  <Text className="text-xs text-typography-500">Avg Level</Text>
                 </VStack>
               </HStack>
             </VStack>
@@ -178,7 +150,10 @@ export default function CursusSkillsCard({ cursusUser }: CursusSkillsCardProps) 
                           </Badge>
                         </HStack>
                         <Progress
-                          value={Math.min((skill.level / 15) * 100, 100)}
+                          value={Math.min(
+                            (skill.level / MAX_SKILL_LEVEL) * 100,
+                            100
+                          )}
                           className="w-full h-2"
                         >
                           <ProgressFilledTrack

@@ -1,5 +1,4 @@
 import ProjectCard from "@/components/projects/ProjectCard";
-import ErrorScreen from "@/components/shared/ErrorScreen";
 import { Heading } from "@/components/shared/gluestack-ui/heading";
 import { HStack } from "@/components/shared/gluestack-ui/hstack";
 import { ChevronDownIcon } from "@/components/shared/gluestack-ui/icon";
@@ -19,41 +18,17 @@ import {
 import { Text } from "@/components/shared/gluestack-ui/text";
 import { VStack } from "@/components/shared/gluestack-ui/vstack";
 import Screen from "@/components/shared/layouts/Screen";
-import LoadingScreen from "@/components/shared/LoadingScreen";
 import { useUserStore } from "@/store/userStore";
 import { ProjectUser } from "@/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function ProjectsScreen() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState("date-desc");
-  const { loadUserProfile, userProfile } = useUserStore();
+  const { userProfile } = useUserStore();
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      setLoading(true);
-      setError(null);
-      // Check if user profile is already loaded
-      if (userProfile) {
-        setLoading(false);
-        return;
-      }
-      const success = await loadUserProfile();
-      if (!success) {
-        setError("Failed to load user profile.");
-      }
-      setLoading(false);
-    };
-    loadProfile();
-  }, [loadUserProfile, userProfile]);
-
-  if (loading) {
-    return <LoadingScreen message="Loading projects..." />;
-  }
-
-  if (error || !userProfile) {
-    return <ErrorScreen message={error || "No user profile available."} />;
+  // userProfile is guaranteed to exist due to TabsLayout guard
+  if (!userProfile) {
+    return null; // This should never happen due to TabsLayout guard
   }
 
   if (userProfile.projects_users.length === 0) {
@@ -131,11 +106,11 @@ export default function ProjectsScreen() {
     <Screen isSafeArea={false}>
       <ScrollView className="flex-1 w-full pt-safe px-4">
         <VStack className="gap-4 p-2">
+          {/* Header (title with sorting options) */}
           <HStack className="justify-between items-center w-full">
             <Heading size="2xl" className="text-highlight-700">
               Projects ({sortedProjects.length})
             </Heading>
-
             {/* Sort Options */}
             <Select
               selectedValue={sortOption}
